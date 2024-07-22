@@ -1,0 +1,116 @@
+Turbo Assembler	 Version 4.1	    06/01/24 10:44:21	    Page 1
+laba1.asm
+
+
+
+      1				     Myif macro	i, neg_label, zer_label, pos_label
+      2					 cmp i,	0	; Сравниваем число с нулем
+      3					 jl neg_label	; Если число меньше нуля, переходим	к	    +
+      4				     метке	NEG
+      5					 jz zer_label	; Если число равно нулю, переходим к метке +
+      6				     ZER
+      7					 jmp pos_label	; Если число больше нуля, переходим	к	    +
+      8				     метке	POS
+      9				     endm
+     10
+     11	0000			     sseg segment stack	'stack'
+     12	0000  0100*(????)		 dw 256	dup(?)
+     13	0200			     sseg ends
+     14
+     15	0000			     data segment
+     16	0000  FE			 x db -2    ; Здесь хранится введенное число
+     17	0001  0A 0D 20 78 20 3C	20+	 neg_msg db 10,13,' x <	0','$'
+     18	      30 24
+     19	000A  0A 0D 78 20 3D 20	30+	 zer_msg db 10,13,'x = 0','$'
+     20	      24
+     21	0012  0A 0D 78 20 3E 20	30+	 pos_msg db 10,13,'x > 0','$'
+     22	      24
+     23
+     24	001A			     data ends
+     25
+     26	0000			     code segment
+     27					 assume	cs:code, ds:data, ss:sseg
+     28
+     29	0000			     start:
+     30	0000  B8 0000s			 mov ax, data  ; Настройка сегментного регистра DS на	    +
+     31				     данные
+     32	0003  8E D8			 mov ds, ax
+     33
+     34					 ; Вводим	число (в данном коде предполагается, что   +
+     35				     число	уже введено и хранится в переменной x)
+     36
+     37					 Myif x, neg, zer, pos
+1    38	0005  80 3E 0000r 00		 cmp x,	0	; Сравниваем число с нулем
+1    39	000A  7C 08			 jl neg	  ; Если число	меньше нуля, переходим к метке	NEG
+1    40	000C  74 0C			 jz zer	  ; Если число	равно нулю, переходим	к метке ZER
+1    41	000E  EB 10 90			 jmp pos  ; Если число	больше нуля, переходим к метке	POS
+     42	0011  EB 13 90			 jmp exit
+     43
+     44	0014			     neg:
+*Warning* laba1.asm(32)	Reserved word used as symbol: NEG
+     45	0014  BA 0001r			 mov dx, offset	neg_msg
+     46	0017  EB 0D 90			 jmp exit
+     47
+     48	001A			     zer:
+     49	001A  BA 000Ar			 mov dx, offset	zer_msg
+     50	001D  EB 07 90			 jmp exit
+     51
+     52	0020			     pos:
+     53	0020  BA 0012r			 mov dx, offset	pos_msg
+     54	0023  EB 01 90			 jmp exit
+     55
+     56	0026			     exit:
+Turbo Assembler	 Version 4.1	    06/01/24 10:44:21	    Page 2
+laba1.asm
+
+
+
+     57	0026  B4 09			 mov ah, 9
+     58	0028  CD 21			 int 21h
+     59
+     60	002A  B4 4C			 mov ah, 4ch
+     61	002C  CD 21			 int 21h
+     62	002E			     code ends
+     63				     end start
+Turbo Assembler	 Version 4.1	    06/01/24 10:44:21	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "06/01/24"
+??FILENAME			  Text	 "laba1	  "
+??TIME				  Text	 "10:44:21"
+??VERSION			  Number 040A
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 LABA1
+@WORDSIZE			  Text	 2
+EXIT				  Near	 CODE:0026
+NEG				  Near	 CODE:0014
+NEG_MSG				  Byte	 DATA:0001
+POS				  Near	 CODE:0020
+POS_MSG				  Byte	 DATA:0012
+START				  Near	 CODE:0000
+X				  Byte	 DATA:0000
+ZER				  Near	 CODE:001A
+ZER_MSG				  Byte	 DATA:000A
+
+Macro Name
+
+MYIF
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  002E Para	  none
+DATA				  16  001A Para	  none
+SSEG				  16  0200 Para	  Stack	  STACK
+Turbo Assembler	 Version 4.1	    06/01/24 10:44:21	    Page 4
+Error Summary
+
+
+
+*Warning* laba1.asm(32)	Reserved word used as symbol: NEG
+

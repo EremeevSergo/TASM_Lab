@@ -1,0 +1,69 @@
+Turbo Assembler	 Version 4.1	    06/01/24 10:52:44	    Page 1
+lab2.asm
+
+
+
+      1	0000			     ﻿code segment
+      2					     assume cs:code,ds:code
+      3					     extrn PadCh:far ; описание	внешней far-процедуры
+      4
+      5	0000  14*(??)		     Res db 20 dup(?) ;	строка результата
+      6	0014  04 46 69 66 65 F8*  +  S db 4, 'Fife', 248 dup(?)	; исходная строка
+      7	      (??)
+      8
+      9	0111  8C C8		     start: mov	ax, cs;	настройка сегмента данных
+     10	0113  8E D8			     mov ds,ax ; на сегмент кода
+     11	0115  1E			     push ds; сегмент строки результата Res
+     12	0116  B8 0000r			     mov ax, offset Res
+     13	0119  50			     push ax; смещение Res
+     14	011A  1E			     push ds; сегмент исходной строки S
+     15	011B  B8 0014r			     mov ax, offset S
+     16	011E  50			     push ax; смещение S
+     17	011F  B0 58			     mov al, 'X'; параметр Ch1
+     18	0121  50			     push ax
+     19	0122  B0 0A			     mov al, 10; параметр Len
+     20	0124  50			     push ax
+     21	0125  0E E8 0000e		     call PadCh	; far-вызов Change
+     22					     ; чтение адреса результата функции Change из стека
+     23	0129  5B			     pop bx ; bx:=смещение Res
+     24	012A  1F			     pop ds ; ds:=сегмент Res
+     25	012B  B5 00			     mov ch, 0;	подготовка в	сх длины
+     26					     ; строки Res
+     27	012D  8A 0F			     mov cl, [bx]
+     28	012F  E3 09			     jcxz Exit;	выход, если строка Res пуста
+     29	0131  43		     Write: inc	bx; продвижение указателя символа bx:=bx+1
+     30	0132  8A 17			     mov dl, [bx]; dl:=очередной символ Res
+     31	0134  B4 02			     mov ah, 2;	вывод символа из dl
+     32	0136  CD 21			     int 21h ; на экран средствами DOS
+     33	0138  E2 F7			     loop Write; цикл по длине строки Res
+     34	013A  B8 4C00		     Exit: mov ax, 4c00h; завершение программы
+     35	013D  CD 21			     int 21h ; чеpез функцию	DOS
+     36	013F			     code ends
+     37				     end start
+Turbo Assembler	 Version 4.1	    06/01/24 10:52:44	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "06/01/24"
+??FILENAME			  Text	 "lab2	  "
+??TIME				  Text	 "10:52:44"
+??VERSION			  Number 040A
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 LAB2
+@WORDSIZE			  Text	 2
+EXIT				  Near	 CODE:013A
+PADCH				  Far	 CODE:---- Extern
+RES				  Byte	 CODE:0000
+S				  Byte	 CODE:0014
+START				  Near	 CODE:0111
+WRITE				  Near	 CODE:0131
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  013F Para	  none
+

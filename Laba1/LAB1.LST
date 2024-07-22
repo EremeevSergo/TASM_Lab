@@ -1,0 +1,112 @@
+Turbo Assembler	 Version 4.1	    11/28/23 10:47:26	    Page 1
+lab1.asm
+
+
+
+      1				     ; Макрокоманда моделирования условного оператора
+      2				     ; аналогичная оператору IF	в Фортране
+      3				     ; для проверки числа в аккумуляторе
+      4				     ; Eсли число отрицательное, то управление передать	ячейке NEG,
+      5				     ; если оно	равно 0, управление передать ячейке ZER,
+      6				     ; если же число положительное, управление передать	ячейке POS.
+      7
+      8				     Myif macro	acc, neg, zer, pos
+      9				     cmp acc, 0	; сравнить аккумулятор с 0
+     10				     jl	neg ; если аккумулятор меньше 0, перейти к NEG
+     11				     jz	zer ; если аккумулятор равен 0,	перейти	к ZER
+     12				     jmp pos ; если аккумулятор	больше 0, перейти к POS
+     13				     endm
+     14
+     15				     ; Резервирование места под	стек
+     16	0000			     sseg segment stack	'stack'
+     17	0000  0100*(0008)	     dw	256 dup(8)
+     18	0200			     sseg ends
+     19
+     20				     ; Определение данных
+     21	0000			     data segment
+     22				     ; Сообщения пользователю
+     23	0000  0A 0D 41 63 63 75	6D+  msg_neg db	10,13,'Accumulator is negative',''
+     24	      75 6C 61 74 6F 72	20+
+     25	      69 73 20 6E 65 67	61+
+     26	      74 69 76 65
+     27	0019  0A 0D 41 63 63 75	6D+  msg_zer db	10,13,'Accumulator is zero',''
+     28	      75 6C 61 74 6F 72	20+
+     29	      69 73 20 7A 65 72	6F
+     30	002E  0A 0D 41 63 63 75	6D+  msg_pos db	10,13,'Accumulator is positive',''
+     31	      75 6C 61 74 6F 72	20+
+     32	      69 73 20 70 6F 73	69+
+     33	      74 69 76 65
+     34	0047  FB		     acc db -5 ; инициализация аккумулятора
+     35	0048			     data ends
+     36
+     37				     ; Сегмент кода
+     38	0000			     code segment
+     39				     assume cs:code,ds:data,ss:sseg
+     40
+     41	0000  B8 0000s		     start: mov	ax,data	; настроить сегментный регистр DS на данные
+     42	0003  8E D8		     mov ds,ax
+     43
+     44				     Myif acc, m1, m2, m3 ; проверить аккумулятор
+1    45	0005  80 3E 0047r 00	     cmp acc, 0	; сравнить аккумулятор с 0
+1    46	000A  7C 05		     jl	m1 ; если аккумулятор меньше 0,	перейти	к m1
+1    47	000C  74 09		     jz	m2 ; если аккумулятор равен 0, перейти к m2
+1    48	000E  EB 0D 90		     jmp m3 ; если аккумулятор больше 0, перейти к m3
+     49
+     50	0011  BA 0000r		     m1: mov dx, offset	msg_neg	; аккумулятор отрицательный
+     51	0014  EB 0D 90		     jmp exit
+     52
+     53	0017  BA 0019r		     m2: mov dx, offset	msg_zer	; аккумулятор равен 0
+     54	001A  EB 07 90		     jmp exit
+     55
+     56	001D  BA 002Er		     m3: mov dx, offset	msg_pos	; аккумулятор положительный
+     57	0020  EB 01 90		     jmp exit
+Turbo Assembler	 Version 4.1	    11/28/23 10:47:26	    Page 2
+lab1.asm
+
+
+
+     58
+     59	0023  B4 09		     exit: mov ah, 9 ; вывод сообщения пользователю
+     60	0025  CD 21		     int 21h
+     61
+     62	0027  B4 4C		     mov ah,4ch	; завершить программу
+     63	0029  CD 21		     int 21h ; и выйти в DOS
+     64
+     65	002B			     code ends
+     66				     end start
+Turbo Assembler	 Version 4.1	    11/28/23 10:47:26	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "11/28/23"
+??FILENAME			  Text	 "lab1	  "
+??TIME				  Text	 "10:47:26"
+??VERSION			  Number 040A
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 LAB1
+@WORDSIZE			  Text	 2
+ACC				  Byte	 DATA:0047
+EXIT				  Near	 CODE:0023
+M1				  Near	 CODE:0011
+M2				  Near	 CODE:0017
+M3				  Near	 CODE:001D
+MSG_NEG				  Byte	 DATA:0000
+MSG_POS				  Byte	 DATA:002E
+MSG_ZER				  Byte	 DATA:0019
+START				  Near	 CODE:0000
+
+Macro Name
+
+MYIF
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  002B Para	  none
+DATA				  16  0048 Para	  none
+SSEG				  16  0200 Para	  Stack	  STACK
+
